@@ -1,0 +1,36 @@
+server:
+  port: 18001
+knife4j:
+  enableAggregation: true
+  basicAuth:
+    enable: false
+    username: admin
+    password: 123456
+#cloud聚合文档，通过gateway路由
+  cloud:
+    enable: true
+    routes:
+      - name: 用户模块
+        uri: 127.0.0.1:61
+#        uri: 192.168.1.50:30003
+        location: /platform-user/v2/api-docs
+        order: 1
+      - name: 授权模块
+        uri: 127.0.0.1:61
+#        uri: 192.168.1.50:30003
+        location: /platform-auth/v2/api-docs
+        order: 2
+      - name: 家长端
+        uri: 127.0.0.1:61
+#        uri: 192.168.1.50:30003
+        location: /platform-parent/v2/api-docs
+        order: 3
+#      - name: 资源管理
+#        uri: 127.0.0.1:60
+#        location: /platform-resourcemanager/v2/api-docs
+#        order: 4
+      - name: 测评系统
+        uri: 127.0.0.1:61
+#        uri: 192.168.1.50:30003
+        location: /education-test/v2/api-docs
+        order: 5

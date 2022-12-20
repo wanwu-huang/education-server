@@ -1,0 +1,593 @@
+{
+  "testModuleTwoVO": {
+    "attentionLevelTable": [{
+      "people": 0,
+      "classRatio": "0",
+      "followName": "1级关注"
+    },
+      {
+        "people": 0,
+        "classRatio": "0",
+        "followName": "2级关注"
+      },
+      {
+        "people": 0,
+        "classRatio": "0",
+        "followName": "3级关注"
+      },
+      {
+        "people": 0,
+        "classRatio": "0",
+        "followName": "良好"
+      }
+    ],
+    "attentionLevel": [{
+      "title": "",
+      "chartData": [{
+        "name": "3级关注",
+        "value": 0,
+        "chartColor": "#E5162E"
+      },
+        {
+          "name": "2级关注",
+          "value": 0,
+          "chartColor": "#FB8500"
+        },
+        {
+          "name": "1级关注",
+          "value": 0,
+          "chartColor": "#FFC31E"
+        },
+        {
+          "name": "良好",
+          "value": 0,
+          "chartColor": "#3ACE0A"
+        }
+      ]
+    },
+      {
+        "title": "学生评定等级",
+        "chartData": [{
+          "name": "3级关注",
+          "value": 0,
+          "chartColor": "#E5162E"
+        },
+          {
+            "name": "2级关注",
+            "value": 0,
+            "chartColor": "#FB8500"
+          },
+          {
+            "name": "1级关注",
+            "value": 0,
+            "chartColor": "#FFC31E"
+          },
+          {
+            "name": "良好",
+            "value": 0,
+            "chartColor": "#3ACE0A"
+          }
+        ]
+      },
+      {
+        "title": "教师评定等级",
+        "chartData": [{
+          "name": "3级关注",
+          "value": 0,
+          "chartColor": "#E5162E"
+        },
+          {
+            "name": "2级关注",
+            "value": 0,
+            "chartColor": "#FB8500"
+          },
+          {
+            "name": "1级关注",
+            "value": 0,
+            "chartColor": "#FFC31E"
+          },
+          {
+            "name": "良好",
+            "value": 0,
+            "chartColor": "#3ACE0A"
+          }
+        ]
+      },
+      {
+        "title": "家长评定等级",
+        "chartData": [{
+          "name": "1级关注",
+          "value": 0,
+          "chartColor": "#FFC31E"
+        },
+          {
+            "name": "良好",
+            "value": 0,
+            "chartColor": "#3ACE0A"
+          }
+        ]
+      }
+    ],
+    "attentionStudent": [],
+    "warningLevelTable": [{
+      "people": 0,
+      "classRatio": "0",
+      "followName": "1级预警"
+    },
+      {
+        "people": 0,
+        "classRatio": "0",
+        "followName": "2级预警"
+      },
+      {
+        "people": 0,
+        "classRatio": "0",
+        "followName": "3级预警"
+      },
+      {
+        "people": 0,
+        "classRatio": "0",
+        "followName": "未发现"
+      }
+    ],
+    "warningLevel": [{
+      "title": "",
+      "chartData": [{
+        "name": "3级预警",
+        "value": 0,
+        "chartColor": "#E5162E"
+      },
+        {
+          "name": "2级预警",
+          "value": 0,
+          "chartColor": "#FB8500"
+        },
+        {
+          "name": "1级预警",
+          "value": 0,
+          "chartColor": "#FFC31E"
+        },
+        {
+          "name": "未发现",
+          "value": 0,
+          "chartColor": "#3ACE0A"
+        }
+      ]
+    }],
+    "warningStudent": []
+  },
+  "testOverview": {
+    "active": [{
+      "title": "学习状态",
+      "result": "无",
+      "score": "0",
+      "fontColor": "#FFC31E"
+    },
+      {
+        "title": "品行表现",
+        "result": "无",
+        "score": "0",
+        "fontColor": "#E5162E"
+      },
+      {
+        "title": "心理韧性",
+        "result": "无",
+        "score": "0",
+        "fontColor": "#FB8500"
+      }
+    ],
+    "negative": [{
+      "title": "综合压力",
+      "result": "无",
+      "score": "0",
+      "fontColor": "#FFC31E"
+    },
+      {
+        "title": "情绪指数",
+        "result": "无",
+        "score": "0",
+        "fontColor": "#E5162E"
+      },
+      {
+        "title": "睡眠指数",
+        "result": "无",
+        "score": "0",
+        "fontColor": "#E5162E"
+      }
+    ]
+  },
+
+
+
+  "dimensionList": [{
+    "totalResultVOList": [{
+      "title": "班级",
+      "score": "0",
+      "fontColor": "#027AFF"
+    },
+      {
+        "title": "年级平均",
+        "score": "0",
+        "fontColor": "#B7D9FF"
+      }
+    ],
+    "targetResultVO": {
+      "targetVOList": [{
+        "title": "学习态度",
+        "scoreOne": "0",
+        "fontColorOne": "#027AFF",
+        "scoreTwo": "0",
+        "fontColorTwo": "#B7D9FF"
+      },
+        {
+          "title": "时间管理",
+          "scoreOne": "0",
+          "fontColorOne": "#027AFF",
+          "scoreTwo": "0",
+          "fontColorTwo": "#B7D9FF"
+        },
+        {
+          "title": "学习倦怠",
+          "scoreOne": "0",
+          "fontColorOne": "#FB8500",
+          "scoreTwo": "0",
+          "fontColorTwo": "#F3BFA3"
+        }
+      ],
+      "titleNameVOList": [{
+        "name": "班级",
+        "color": "#027AFF"
+      },
+        {
+          "name": "班级",
+          "color": "#FB8500"
+        },
+        {
+          "name": "年级平均",
+          "color": "#B7D9FF"
+        },
+        {
+          "name": "年级平均",
+          "color": "#F3BFA3"
+        }
+      ]
+    },
+    "targetResult": {
+      "goodTarget": [],
+      "noTarget": [],
+      "badTarget": []
+    },
+    "diffCheck": {
+      "diffent": "0.00(不显著)",
+      "explanation": "本班学生学习状态跟年级平均水平相比没有差异"
+    },
+    "classDiffList": [],
+    "typicalStudentList": [],
+    "typicalNameList": []
+  },
+    {
+      "totalResultVOList": [{
+        "title": "班级",
+        "score": "0",
+        "fontColor": "#027AFF"
+      },
+        {
+          "title": "年级平均",
+          "score": "0",
+          "fontColor": "#B7D9FF"
+        }
+      ],
+      "targetResultVO": {
+        "targetVOList": [{
+          "title": "道德性",
+          "scoreOne": "0",
+          "fontColorOne": "#027AFF",
+          "scoreTwo": "0",
+          "fontColorTwo": "#B7D9FF"
+        },
+          {
+            "title": "稳定性",
+            "scoreOne": "0.0",
+            "fontColorOne": "#027AFF",
+            "scoreTwo": "0.0",
+            "fontColorTwo": "#B7D9FF"
+          },
+          {
+            "title": "纪律性",
+            "scoreOne": "0.0",
+            "fontColorOne": "#027AFF",
+            "scoreTwo": "0.0",
+            "fontColorTwo": "#B7D9FF"
+          },
+          {
+            "title": "其他表现",
+            "scoreOne": "0",
+            "fontColorOne": "#027AFF",
+            "scoreTwo": "0",
+            "fontColorTwo": "#B7D9FF"
+          }
+        ],
+        "titleNameVOList": [{
+          "name": "班级",
+          "color": "#027AFF"
+        },
+          {
+            "name": "年级平均",
+            "color": "#B7D9FF"
+          }
+        ]
+      },
+      "targetResult": {
+        "goodTarget": [],
+        "noTarget": [],
+        "badTarget": []
+      },
+      "diffCheck": {
+        "diffent": "0.00(不显著)",
+        "explanation": "本班学生品行表现跟年级平均水平相比没有差异"
+      },
+      "classDiffList": [],
+      "typicalStudentList": [],
+      "typicalNameList": []
+    },
+    {
+      "totalResultVOList": [{
+        "title": "班级",
+        "score": "0",
+        "fontColor": "#027AFF"
+      },
+        {
+          "title": "年级平均",
+          "score": "0",
+          "fontColor": "#B7D9FF"
+        }
+      ],
+      "targetResultVO": {
+        "targetVOList": [{
+          "title": "情绪管理",
+          "scoreOne": "0",
+          "fontColorOne": "#027AFF",
+          "scoreTwo": "0",
+          "fontColorTwo": "#B7D9FF"
+        },
+          {
+            "title": "目标激励",
+            "scoreOne": "0",
+            "fontColorOne": "#027AFF",
+            "scoreTwo": "0",
+            "fontColorTwo": "#B7D9FF"
+          },
+          {
+            "title": "积极关注",
+            "scoreOne": "0",
+            "fontColorOne": "#027AFF",
+            "scoreTwo": "0",
+            "fontColorTwo": "#B7D9FF"
+          },
+          {
+            "title": "学校支持",
+            "scoreOne": "0",
+            "fontColorOne": "#027AFF",
+            "scoreTwo": "0",
+            "fontColorTwo": "#B7D9FF"
+          },
+          {
+            "title": "人际支持",
+            "scoreOne": "0",
+            "fontColorOne": "#027AFF",
+            "scoreTwo": "0",
+            "fontColorTwo": "#B7D9FF"
+          },
+          {
+            "title": "家庭支持",
+            "scoreOne": "0",
+            "fontColorOne": "#027AFF",
+            "scoreTwo": "0",
+            "fontColorTwo": "#B7D9FF"
+          }
+        ],
+        "titleNameVOList": [{
+          "name": "班级",
+          "color": "#027AFF"
+        },
+          {
+            "name": "年级平均",
+            "color": "#B7D9FF"
+          }
+        ]
+      },
+      "targetResult": {
+        "goodTarget": [],
+        "noTarget": [],
+        "badTarget": []
+      },
+      "diffCheck": {
+        "diffent": "0.00(不显著)",
+        "explanation": "本班学生心理韧性跟年级平均水平相比没有差异"
+      },
+      "classDiffList": [],
+      "typicalStudentList": [],
+      "typicalNameList": []
+    },
+    {
+      "totalResultVOList": [{
+        "title": "班级",
+        "score": "0",
+        "fontColor": "#FB8500"
+      },
+        {
+          "title": "年级平均",
+          "score": "0",
+          "fontColor": "#F3BFA3"
+        }
+      ],
+      "targetResultVO": {
+        "targetVOList": [{
+          "title": "学习压力",
+          "scoreOne": "0",
+          "fontColorOne": "#FB8500",
+          "scoreTwo": "0",
+          "fontColorTwo": "#F3BFA3"
+        },
+          {
+            "title": "人际压力",
+            "scoreOne": "0",
+            "fontColorOne": "#FB8500",
+            "scoreTwo": "0",
+            "fontColorTwo": "#F3BFA3"
+          },
+          {
+            "title": "受惩罚压力",
+            "scoreOne": "0",
+            "fontColorOne": "#FB8500",
+            "scoreTwo": "0",
+            "fontColorTwo": "#F3BFA3"
+          },
+          {
+            "title": "丧失压力",
+            "scoreOne": "0",
+            "fontColorOne": "#FB8500",
+            "scoreTwo": "0",
+            "fontColorTwo": "#F3BFA3"
+          },
+          {
+            "title": "适应压力",
+            "scoreOne": "0",
+            "fontColorOne": "#FB8500",
+            "scoreTwo": "0",
+            "fontColorTwo": "#F3BFA3"
+          }
+        ],
+        "titleNameVOList": [{
+          "name": "班级",
+          "color": "#FB8500"
+        },
+          {
+            "name": "年级平均",
+            "color": "#F3BFA3"
+          }
+        ]
+      },
+      "targetResult": {
+        "goodTarget": [],
+        "noTarget": [],
+        "badTarget": []
+      },
+      "diffCheck": {
+        "diffent": "0.00(不显著)",
+        "explanation": "本班学生综合压力跟年级平均水平相比没有差异"
+      },
+      "classDiffList": [],
+      "typicalStudentList": [],
+      "typicalNameList": []
+    },
+    {
+      "totalResultVOList": [{
+        "title": "班级",
+        "score": "0",
+        "fontColor": "#FB8500"
+      },
+        {
+          "title": "年级平均",
+          "score": "0",
+          "fontColor": "#F3BFA3"
+        }
+      ],
+      "targetResultVO": {
+        "targetVOList": [{
+          "title": "强迫",
+          "scoreOne": "0",
+          "fontColorOne": "#FB8500",
+          "scoreTwo": "0",
+          "fontColorTwo": "#F3BFA3"
+        },
+          {
+            "title": "偏执",
+            "scoreOne": "0",
+            "fontColorOne": "#FB8500",
+            "scoreTwo": "0",
+            "fontColorTwo": "#F3BFA3"
+          },
+          {
+            "title": "敌对",
+            "scoreOne": "0",
+            "fontColorOne": "#FB8500",
+            "scoreTwo": "0",
+            "fontColorTwo": "#F3BFA3"
+          },
+          {
+            "title": "人际敏感",
+            "scoreOne": "0",
+            "fontColorOne": "#FB8500",
+            "scoreTwo": "0",
+            "fontColorTwo": "#F3BFA3"
+          },
+          {
+            "title": "焦虑",
+            "scoreOne": "0",
+            "fontColorOne": "#FB8500",
+            "scoreTwo": "0",
+            "fontColorTwo": "#F3BFA3"
+          },
+          {
+            "title": "抑郁",
+            "scoreOne": "0",
+            "fontColorOne": "#FB8500",
+            "scoreTwo": "0",
+            "fontColorTwo": "#F3BFA3"
+          }
+        ],
+        "titleNameVOList": [{
+          "name": "班级",
+          "color": "#FB8500"
+        },
+          {
+            "name": "年级平均",
+            "color": "#F3BFA3"
+          }
+        ]
+      },
+      "targetResult": {
+        "goodTarget": [],
+        "noTarget": [],
+        "badTarget": []
+      },
+      "diffCheck": {
+        "diffent": "0.00(不显著)",
+        "explanation": "本班学生情绪指数跟年级平均水平相比没有差异"
+      },
+      "classDiffList": [],
+      "typicalStudentList": [],
+      "typicalNameList": []
+    },
+    {
+      "totalResultVOList": [{
+        "title": "班级",
+        "score": "0",
+        "fontColor": "#FB8500"
+      },
+        {
+          "title": "年级平均",
+          "score": "0",
+          "fontColor": "#F3BFA3"
+        }
+      ],
+      "targetResultVO": {
+        "targetVOList": [],
+        "titleNameVOList": []
+      },
+      "targetResult": {
+        "goodTarget": [],
+        "noTarget": [],
+        "badTarget": []
+      },
+      "diffCheck": {
+        "diffent": "0.00(不显著)",
+        "explanation": "本班学生睡眠指数跟年级平均水平相比没有差异"
+      },
+      "classDiffList": [],
+      "typicalStudentList": [],
+      "typicalNameList": []
+    }
+  ]
+}

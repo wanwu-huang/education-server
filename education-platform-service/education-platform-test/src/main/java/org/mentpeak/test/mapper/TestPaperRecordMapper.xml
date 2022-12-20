@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.test.mapper.TestPaperRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="testPaperRecordResultMap" type="org.mentpeak.test.entity.TestPaperRecord">
+        <result column="id" property="id"/>
+        <result column="status" property="status"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_no" property="userNo"/>
+        <result column="user_name" property="userName"/>
+        <result column="questionnaire_id" property="questionnaireId"/>
+        <result column="task_id" property="taskId"/>
+        <result column="questionnaire_name" property="questionnaireName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="finish_time" property="finishTime"/>
+        <result column="report_id" property="reportId"/>
+        <result column="risk_level" property="riskLevel"/>
+        <result column="risk_result" property="riskResult"/>
+        <result column="intervene_status" property="interveneStatus"/>
+    </resultMap>
+
+
+    <select id="selectTestPaperRecordPage" resultMap="testPaperRecordResultMap">
+        select * from Test_paper_record where is_deleted = 0
+    </select>
+
+    <select id="getList" resultType="org.mentpeak.test.vo.TestRecordVO">
+        SELECT
+            p.task_id AS taskId,
+            p.questionnaire_id AS questionnaireId,
+            p.questionnaire_name AS NAME,
+            p.start_time AS testTime,
+            p.report_id AS reportId,
+            t.report_is_visible AS isCheck,
+            t.task_name AS taskName
+        FROM
+            test_paper_record AS p
+            LEFT JOIN test_task AS t ON p.task_id = t.id
+        WHERE
+            p.user_id = #{userId}
+    </select>
+  <select id="paperRecordList" resultType="org.mentpeak.test.entity.TestPaperRecord">
+      select * from test_paper_record where user_id = #{userId} and task_id = #{taskId} order by create_time desc
+  </select>
+
+</mapper>

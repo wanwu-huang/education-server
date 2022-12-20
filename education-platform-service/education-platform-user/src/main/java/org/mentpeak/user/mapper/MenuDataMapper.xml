@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.user.mapper.MenuDataMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="menuDataResultMap" type="org.mentpeak.user.entity.MenuData">
+        <result column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="menu_id" property="menuId"/>
+        <result column="data_id" property="dataId"/>
+        <result column="role_id" property="roleId"/>
+        <result column="is_deleted" property="isDeleted"/>
+    </resultMap>
+
+
+    <select id="selectMenuDataPage" resultMap="menuDataResultMap">
+        select * from menu_data where is_deleted = 0
+    </select>
+
+</mapper>

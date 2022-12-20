@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.test.mapper.TeacherClassMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="teacherClassResultMap" type="org.mentpeak.test.entity.TeacherClass">
+        <result column="id" property="id"/>
+        <result column="tenant_code" property="tenantCode"/>
+        <result column="teacher_id" property="teacherId"/>
+        <result column="class_id" property="classId"/>
+    </resultMap>
+
+
+    <select id="selectTeacherClassPage" resultMap="teacherClassResultMap">
+        select * from teacher_class where is_deleted = 0
+    </select>
+
+    <delete id="deleteByGradeId">
+        delete from teacher_class where grade_id = #{gradeId}
+    </delete>
+
+</mapper>

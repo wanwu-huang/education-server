@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.test.mapper.TestTaskDepartmentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="testTaskDepartmentResultMap" type="org.mentpeak.test.entity.TestTaskDepartment">
+        <result column="id" property="id"/>
+        <result column="test_task_id" property="testTaskId"/>
+        <result column="test_department_id" property="testDepartmentId"/>
+    </resultMap>
+
+
+    <select id="selectTestTaskDepartmentPage" resultMap="testTaskDepartmentResultMap">
+        select * from test_task_department where is_deleted = 0
+    </select>
+
+    <select id="getGradeList" resultType="org.mentpeak.test.vo.ReportListVO">
+        SELECT
+        t.test_department_id AS gradeId,
+        d.dict_value AS name
+        FROM
+        test_task_department t
+        LEFT JOIN platform_dict d ON t.test_department_id = d.id
+        WHERE
+        test_task_id = #{taskId}
+        <if test="gradeId != null and gradeId != ''">
+            and t.test_department_id = #{gradeId}
+        </if>
+    </select>
+
+    <select id="getGradeList2" resultType="org.mentpeak.test.vo.ReportListVO">
+        SELECT
+        t.test_department_id AS gradeId,
+        d.dict_value AS name
+        FROM
+        test_task_department t
+        LEFT JOIN platform_dict d ON t.test_department_id = d.id
+        WHERE
+        test_task_id = #{taskId}
+        <if test="gradeId != null and gradeId != ''">
+            and t.test_department_id = #{gradeId}
+        </if>
+    </select>
+    <select id="getClassList" resultType="org.mentpeak.test.vo.ReportClassListVO">
+        SELECT
+        t.grade_id AS gradeId,
+        d1.dict_value AS gradeName,
+        t.class_id AS classId,
+        d2.dict_value AS className
+        FROM
+        (
+        SELECT DISTINCT
+        ( class_id ),
+        grade as grade_id
+        FROM
+        t_his_user_ext t
+        WHERE
+        create_user IN ( SELECT user_id FROM test_task_user WHERE test_task_id = #{taskId} )
+        <if test="classId != null and classId != ''">
+            AND class_id = #{classId}
+        </if>
+        <if test="gradeId != null and gradeId != ''">
+            AND grade = #{gradeId}
+        </if>
+        ) t
+        LEFT JOIN platform_dict d1 ON t.grade_id = d1.id
+        LEFT JOIN platform_dict d2 ON t.class_id = d2.id
+    </select>
+
+    <select id="getClassList2" resultType="org.mentpeak.test.vo.ReportClassListVO">
+        SELECT
+        t.grade_id AS gradeId,
+        d1.dict_value AS gradeName,
+        t.class_id AS classId,
+        d2.dict_value AS className
+        FROM
+        (
+        SELECT DISTINCT
+        ( class_id ),
+        grade as grade_id
+        FROM
+        t_his_user_ext t
+        WHERE
+        create_user IN ( SELECT user_id FROM test_task_user WHERE test_task_id = #{taskId} )
+        <if test="classId != null and classId != ''">
+            AND class_id = #{classId}
+        </if>
+        <if test="gradeId != null and gradeId != ''">
+            AND grade = #{gradeId}
+        </if>
+        ) t
+        LEFT JOIN platform_dict d1 ON t.grade_id = d1.id
+        LEFT JOIN platform_dict d2 ON t.class_id = d2.id
+    </select>
+
+    <select id="getUserByPhone" resultType="org.mentpeak.test.entity.BindTeacher">
+		SELECT
+		    u.id AS userId,
+			u.real_name AS NAME,
+			u.phone AS phone,
+			ue.id_card AS idCard
+		FROM
+			platform_user u
+			LEFT JOIN t_his_user_ext ue ON u.id = ue.create_user
+		WHERE
+			u.phone = #{phone}
+    </select>
+  <select id="getDepartmentIdListByTaskId" resultType="java.lang.Integer">
+      select DISTINCT(ue.grade) as grade from test_task_user tu inner join t_his_user_ext ue on tu.user_id = ue.create_user and tu.test_task_id =  #{taskId}
+  </select>
+
+</mapper>

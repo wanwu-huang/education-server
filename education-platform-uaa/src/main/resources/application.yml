@@ -1,0 +1,4 @@
+swagger:
+  base-package: org.mentpeak,org.springframework.security.oauth2.provider.endpoint
+
+

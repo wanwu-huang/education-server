@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.test.mapper.TestOptionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="testOptionResultMap" type="org.mentpeak.test.entity.TestOption">
+        <result column="id" property="id"/>
+        <result column="status" property="status"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="question_id" property="questionId"/>
+        <result column="sort" property="sort"/>
+        <result column="title" property="title"/>
+        <result column="score" property="score"/>
+        <result column="pv" property="pv"/>
+        <result column="cpc" property="cpc"/>
+    </resultMap>
+
+
+    <select id="selectTestOptionPage" resultMap="testOptionResultMap">
+        select * from test_option where is_deleted = 0
+    </select>
+    <select id="optionScoreList" resultType="java.lang.String">
+        SELECT
+            CONCAT(op.score,' / ',op.title) as option_score_title
+        FROM
+                ( SELECT * FROM test_paper_question WHERE paper_id = #{paperId} ) t
+                    LEFT JOIN test_question q ON q.id = t.question_id
+                    LEFT JOIN test_option op ON op.id = t.option_id
+        order by q.sort asc
+    </select>
+  <select id="optionIdList" resultType="java.lang.String">
+      select o.id from test_option o inner join test_dimension_index_question t on o.question_id = t.question_id and t.index_id = #{indexId} and o.score = #{score}
+  </select>
+    <select id="optionIdListByQuestionId" resultType="java.lang.String">
+        select o.id from test_option o inner join test_dimension_index_question t on o.question_id = t.question_id and t.question_id = #{questionId} and o.score != 0
+    </select>
+
+</mapper>

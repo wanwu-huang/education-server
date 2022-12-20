@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.test.mapper.TestQuestionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="testQuestionResultMap" type="org.mentpeak.test.entity.TestQuestion">
+        <result column="id" property="id"/>
+        <result column="status" property="status"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="module_id" property="moduleId"/>
+        <result column="title" property="title"/>
+        <result column="question_type" property="questionType"/>
+        <result column="pv" property="pv"/>
+        <result column="remarks" property="remarks"/>
+        <result column="sort" property="sort"/>
+    </resultMap>
+
+
+    <select id="selectTestQuestionPage" resultMap="testQuestionResultMap">
+        select * from test_question where is_deleted = 0
+    </select>
+  <select id="questionList" resultType="org.mentpeak.test.entity.TestQuestion">
+      SELECT
+          q.*
+      FROM
+          ( SELECT question_id FROM test_dimension_index_question WHERE index_id = #{indexId} ) t
+              INNER JOIN test_question q ON t.question_id = q.id
+  </select>
+
+</mapper>

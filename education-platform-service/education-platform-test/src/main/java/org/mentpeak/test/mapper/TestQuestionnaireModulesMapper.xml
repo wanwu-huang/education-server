@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.test.mapper.TestQuestionnaireModulesMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="testQuestionnaireModulesResultMap" type="org.mentpeak.test.entity.TestQuestionnaireModules">
+        <result column="id" property="id"/>
+        <result column="questionnaire_id" property="questionnaireId"/>
+        <result column="module_id" property="moduleId"/>
+    </resultMap>
+
+
+    <select id="selectTestQuestionnaireModulesPage" resultMap="testQuestionnaireModulesResultMap">
+        select * from test_questionnaire_modules where is_deleted = 0
+    </select>
+
+</mapper>

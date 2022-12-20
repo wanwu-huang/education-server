@@ -1,0 +1,10 @@
+#服务器端口
+server:
+  port: 26105
+
+#数据源配置
+spring:
+  datasource:
+    url: ${platform.datasource.test.url}
+    username: ${platform.datasource.test.username}
+    password: ${platform.datasource.test.password}

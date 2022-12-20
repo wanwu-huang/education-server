@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.user.mapper.UserExtMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="userExtResultMap" type="org.mentpeak.user.entity.UserExt">
+        <id column="id" property="id"/>
+        <result column="tenant_code" property="tenantCode"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="job_id" property="jobId"/>
+        <result column="head_url" property="headUrl"/>
+        <result column="area_id" property="areaId"/>
+    </resultMap>
+
+
+    <select id="selectUserExtPage" resultMap="userExtResultMap">
+        select * from t_his_user_ext where is_deleted = 0
+    </select>
+
+    <select id="getUserByAccount" resultType="org.mentpeak.user.entity.User">
+        		SELECT
+                    *
+                FROM
+                    platform_user
+                WHERE
+                    role_id = 4
+                    AND account = #{account}
+                    AND id IN (
+                    SELECT
+                        create_user
+                    FROM
+                        t_his_user_ext
+                    WHERE
+                        address = #{address}
+                        AND grade = #{gradeId}
+                    AND class_id = #{classId})
+    </select>
+    <select id="userExtList" resultType="org.mentpeak.user.entity.UserExt">
+      SELECT * FROM t_his_user_ext WHERE is_deleted = 1 AND create_user = #{userId}
+  </select>
+    <select id="userExtInfoById" resultType="org.mentpeak.user.entity.UserExt">
+    select * from t_his_user_ext where create_user = #{userId}
+  </select>
+
+    <update id="updateUserExt">
+        update t_his_user_ext SET grade = #{grade}, class_id = #{classId} ,update_time = #{updateTime},is_deleted = 0 where id = #{id}
+    </update>
+
+    <select id="getTenantName" resultType="org.mentpeak.user.entity.UserExtAndSchool">
+        		select u.grade, u.class_id,t.tenant_name as address from t_his_user_ext u Left join platform_tenant t on u.tenant_code = t.tenant_code
+	where u.is_deleted = 0 AND u.create_user = #{userId}
+    </select>
+
+    <update id="updateSchool">
+        update t_his_user_ext SET address = #{address} where create_user = #{userId}
+    </update>
+
+</mapper>

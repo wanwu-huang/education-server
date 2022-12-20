@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.test.mapper.ClassUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="classUserResultMap" type="org.mentpeak.test.entity.ClassUser">
+        <result column="id" property="id"/>
+        <result column="tenant_code" property="tenantCode"/>
+        <result column="class_id" property="classId"/>
+        <result column="user_id" property="userId"/>
+    </resultMap>
+
+
+
+    <select id="selectClassUserPage" resultMap="classUserResultMap">
+        select * from class_user where is_deleted = 0
+    </select>
+
+    <select id="userManagerList" resultType="org.mentpeak.test.vo.GradeUserVO">
+
+
+        SELECT t.*
+        FROM (
+                 SELECT d.dict_value as grade_name,
+                        g.grade,
+                        g.count
+                 FROM (
+                          SELECT ue.grade,
+                                 count(ue.id) AS count
+                          FROM platform_user u
+                                   INNER JOIN t_his_user_ext ue ON u.id = ue.create_user and u.is_deleted = 0
+                              AND u.role_id = 4
+                          GROUP BY ue.grade
+                      ) g
+                          INNER JOIN platform_dict d ON g.grade = d.id
+                 order by g.grade asc
+             ) t where 1 = 1
+        <if test="gradeId != null and gradeId !=''">
+            AND t.grade = #{gradeId,jdbcType=LONGVARCHAR}
+        </if>
+    </select>
+
+    <select id="userManagerDetailList" resultType="org.mentpeak.test.vo.GradeDetailUserVO">
+        SELECT t.*
+        FROM (
+                 SELECT u.id,
+                        u.account,
+                        u.real_name,
+                        u.create_time,
+                        u.sex,
+                        ue.grade,
+                        ue.class_id,
+                        d.dict_value AS class_name
+                 FROM platform_user u
+                          INNER JOIN t_his_user_ext ue ON u.id = ue.create_user and u.is_deleted = 0
+                     AND u.role_id = 4
+                     AND ue.grade =#{gradeId,jdbcType=LONGVARCHAR}
+                          INNER JOIN platform_dict d ON ue.class_id = d.id
+             )  t where 1 = 1
+        <if test="realName != null and realName !=''">
+            AND t.real_name like concat ('%',#{realName,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="account != null and account !=''">
+            AND t.account = #{account,jdbcType=VARCHAR}
+        </if>
+        <if test="classId != null and classId !=''">
+            AND t.class_id = #{classId,jdbcType=LONGVARCHAR}
+        </if>
+        <if test="sex != null and sex !=''">
+            AND t.sex = #{sex,jdbcType=INTEGER}
+        </if>
+    </select>
+    <select id="getValueById" resultType="org.mentpeak.test.vo.DictVO">
+        select * from platform_dict where id = #{id}
+    </select>
+    <select id="taskCountByGradeId" resultType="java.lang.Integer">
+        SELECT
+            count( tu.id ) AS count
+        FROM
+            ( SELECT create_user FROM t_his_user_ext ue WHERE ue.grade = #{gradeId} ) t
+            INNER JOIN test_task_user tu ON t.create_user = tu.user_id
+            AND tu.completion_status = 1
+    </select>
+
+  <update id="updateUserInfoByUserId">
+
+    update platform_user set is_deleted = 1 where id in
+    <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </update>
+
+    <update id="updateClassGradeInfoByUserId">
+
+        update t_his_user_ext set grade = null ,class_id = null , is_deleted = 1 where create_user in
+        <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+  <select id="userIdListByGradeId" resultType="java.lang.Long">
+        select create_user from t_his_user_ext where grade = #{gradeId}
+  </select>
+
+</mapper>

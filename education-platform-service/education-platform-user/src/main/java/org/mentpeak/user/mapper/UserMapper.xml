@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.user.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="userResultMap" type="org.mentpeak.user.entity.User">
+        <result column="id" property="id"/>
+        <result column="tenant_code" property="tenantCode"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="account" property="account"/>
+        <result column="password" property="password"/>
+        <result column="name" property="name"/>
+        <result column="real_name" property="realName"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="birthday" property="birthday"/>
+        <result column="sex" property="sex"/>
+        <result column="role_id" property="roleId"/>
+        <result column="dept_id" property="deptId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="baseColumnList">
+        select id,
+        create_user AS createUser,
+        create_time AS createTime,
+        update_user AS updateUser,
+        update_time AS updateTime,
+        status,
+        is_deleted AS isDeleted,
+        account, password, name, real_name, email, phone, birthday, sex, role_id, dept_id
+    </sql>
+
+    <select id="selectUserPage" resultMap="userResultMap">
+        select * from platform_user where is_deleted = 0
+    </select>
+
+    <select id="getUser" resultMap="userResultMap">
+        SELECT
+            *
+        FROM
+            platform_user
+        WHERE
+            tenant_code = #{param1} and account = #{param2} or phone = #{param2} and is_deleted = 0
+    </select>
+
+    <select id="getUserByPhone" resultMap="userResultMap">
+        SELECT
+            *
+        FROM
+            platform_user
+        WHERE
+            phone = #{param2} and is_deleted = 0
+    </select>
+
+    <select id="getRoleName" resultType="java.lang.String">
+        SELECT
+        role_name
+        FROM
+        platform_role
+        WHERE
+        id IN
+        <foreach collection="array" item="ids" index="index" open="(" close=")" separator=",">
+            #{ids}
+        </foreach>
+        and is_deleted = 0
+    </select>
+
+    <select id="getRoleAlias" resultType="java.lang.String">
+        SELECT
+        role_alias
+        FROM
+        platform_role
+        WHERE
+        id IN
+        <foreach collection="array" item="ids" index="index" open="(" close=")" separator=",">
+            #{ids}
+        </foreach>
+        and is_deleted = 0
+    </select>
+
+    <select id="getDeptName" resultType="java.lang.String">
+        SELECT
+        dept_name
+        FROM
+        platform_dept
+        WHERE
+        id IN
+        <foreach collection="array" item="ids" index="index" open="(" close=")" separator=",">
+            #{ids}
+        </foreach>
+        and is_deleted = 0
+    </select>
+
+    <select id="teachList" resultType="org.mentpeak.user.entity.User">
+
+        select * from platform_user where FIND_IN_SET('2',role_id) and is_deleted = 0
+
+    </select>
+
+    <select id="selectCountByPhone" resultType="java.lang.Long">
+        select count(phone) from platform_user where phone = #{phone}
+    </select>
+
+    <select id="getUserNoTenantCode" resultMap="userResultMap">
+        SELECT
+            *
+        FROM
+            platform_user
+        WHERE
+              account = #{param1} or phone = #{param1} and is_deleted = 0
+    </select>
+
+    <select id="getUserByEmail" resultMap="userResultMap">
+        SELECT
+        *
+        FROM
+        platform_user
+        WHERE
+        email = #{param1}  and is_deleted = 0
+    </select>
+
+    <select id="getUserByAccount" resultMap="userResultMap">
+        SELECT
+        *
+        FROM
+        platform_user
+        WHERE
+        account = #{param1}  and is_deleted = 0
+    </select>
+
+    <select id="getUserInfo" resultType="org.mentpeak.user.vo.StudentInfoVO">
+        SELECT
+            h.id,
+            h.account,
+            h.real_name AS name,
+            di.dict_value AS grade,
+            dc.dict_value AS className
+        FROM
+            (
+            SELECT
+                u.id,
+                u.real_name,
+                u.account,
+                ue.grade,
+                ue.class_id
+            FROM
+                platform_user AS u
+                LEFT JOIN t_his_user_ext AS ue ON u.id = ue.create_user
+            WHERE
+                u.id = #{userId}
+            ) AS h
+            LEFT JOIN platform_dict AS di ON h.grade = di.id
+            LEFT JOIN platform_dict AS dc ON h.class_id = dc.id
+    </select>
+    <select id="accountList" resultType="org.mentpeak.user.vo.AccountVO">
+        SELECT
+        u.id AS userId,
+        u.account,
+        u.real_name AS NAME,
+        r.role_name AS roleName,
+        u.create_time AS createTime,
+        u.STATUS
+        FROM
+        platform_user u
+        LEFT JOIN platform_role r ON u.role_id = r.id
+        WHERE
+        r.id NOT IN ( 3, 4 )
+        AND u.is_deleted = 0
+        <if test="roleId != null and roleId != ''">
+            AND r.id = #{roleId}
+        </if>
+        <if test="name != null and name != ''">
+            AND u.real_name LIKE concat (
+            '%',#{name,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="status != null and status != '' or status == 0">
+            AND u.STATUS = #{status}
+        </if>
+        order by u.create_time DESC
+    </select>
+
+
+    <insert id="saveUserClass">
+        insert into class_user(tenant_code,class_id,user_id) values (#{tenantCode},#{classId},#{userId})
+    </insert>
+    <insert id="saveTeachClass">
+        insert into teacher_class(tenant_code,teacher_id,class_id,grade_id) values (#{tenantCode},#{userId},#{classId},#{gradeId})
+    </insert>
+    <select id="teacherClassCount" resultType="java.lang.Integer">
+        select count(*) as count from  teacher_class  where teacher_id =#{userId} and class_id = #{classId} and grade_id = #{gradeId}
+    </select>
+    <delete id="deleteTeacherClass">
+        delete from teacher_class where teacher_id =#{userId}
+    </delete>
+  <select id="userListByAccount" resultType="org.mentpeak.user.entity.User">
+      select * from platform_user where account = #{account} and is_deleted = 1 and tenant_code = #{tenantCode}
+  </select>
+    <select id="userByPhone" resultType="org.mentpeak.user.entity.User">
+        select * from platform_user where phone = #{phone} and is_deleted = 1 and tenant_code = #{tenantCode}
+    </select>
+    <select id="userInfoById" resultType="org.mentpeak.user.entity.User">
+        select * from platform_user where id = #{userId}
+    </select>
+    <update id="updateUser">
+        update platform_user SET real_name = #{realName}, sex = #{sex} ,update_user = #{updateUser},update_time = #{updateTime},is_deleted = 0 where id = #{id}
+    </update>
+
+    <update id="updateTeacherUser">
+        update platform_user SET update_user = #{updateUser},update_time = #{updateTime},is_deleted = 0 where id = #{id}
+    </update>
+</mapper>

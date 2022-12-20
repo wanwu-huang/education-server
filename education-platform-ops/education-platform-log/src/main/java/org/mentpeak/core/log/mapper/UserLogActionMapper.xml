@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.core.log.mapper.UserLogActionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="userLogActionResultMap" type="org.mentpeak.core.log.entity.UserLogAction">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="user_id" property="userId"/>
+        <result column="client_id" property="clientId"/>
+        <result column="action_status" property="actionStatus"/>
+        <result column="action_ip" property="actionIp"/>
+        <result column="action_details" property="actionDetails"/>
+    </resultMap>
+
+
+    <select id="selectUserLogActionPage" resultMap="userLogActionResultMap">
+        select * from t_his_user_log_action where is_deleted = 0
+    </select>
+
+</mapper>

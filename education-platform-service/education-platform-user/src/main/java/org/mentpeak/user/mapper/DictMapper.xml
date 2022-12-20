@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.user.mapper.DictMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="dictResultMap" type="org.mentpeak.dict.entity.Dict">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="code" property="code"/>
+        <result column="dict_key" property="dictKey"/>
+        <result column="dict_value" property="dictValue"/>
+        <result column="sort" property="sort"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+    </resultMap>
+
+    <select id="getClassById" resultType="org.mentpeak.dict.vo.GradeVO">
+        SELECT
+            id AS id,
+            dict_value AS NAME
+        FROM
+            platform_dict
+        WHERE
+            id IN (
+            SELECT
+                class_id
+            FROM
+                grade_class
+        WHERE
+            grade_id = #{id})
+    </select>
+
+    <select id="bindStudentList" resultType="org.mentpeak.user.vo.ParentStudentVO">
+        SELECT
+            r.*,
+            u.address AS schoolName
+        FROM
+            (
+            SELECT
+                id AS id,
+                real_name AS NAME
+            FROM
+                platform_user
+            WHERE
+            id IN ( SELECT child_id FROM parent_child WHERE parent_id = #{parentId} )) r
+            LEFT JOIN t_his_user_ext u ON u.create_user = r.id
+    </select>
+
+    <select id="getList" resultMap="dictResultMap">
+        select code, dict_key, dict_value, sort, remark from platform_dict where code = #{param1} and dict_key >= 0 and is_deleted = 0
+    </select>
+    <select id="listByGradeAndClassName" resultType="org.mentpeak.dict.vo.GradeClassVO">
+        SELECT
+            *
+        FROM
+            (
+                SELECT
+                    gc.*,
+                    d.dict_value AS grade_name,
+                    pd.dict_value AS class_name
+                FROM
+                    grade_class gc
+                        LEFT JOIN platform_dict d ON gc.grade_id = d.id
+                        LEFT JOIN platform_dict pd ON gc.class_id = pd.id
+            ) t
+        WHERE
+            t.grade_name = #{gradeName}
+          AND t.class_name = #{className}
+    </select>
+    <select id="listByClassNameAndGradeId" resultType="org.mentpeak.dict.vo.GradeClassVO">
+        SELECT
+            *
+        FROM
+            (
+                SELECT
+                    gc.*,
+                    d.dict_value AS grade_name,
+                    pd.dict_value AS class_name
+                FROM
+                    grade_class gc
+                        LEFT JOIN platform_dict d ON gc.grade_id = d.id
+                        LEFT JOIN platform_dict pd ON gc.class_id = pd.id
+            ) t
+        WHERE
+            t.grade_id = #{gradeId}
+          AND t.class_name = #{className}
+    </select>
+
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.test.mapper.TestTaskQuestionnaireMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="testTaskQuestionnaireResultMap" type="org.mentpeak.test.entity.TestTaskQuestionnaire">
+        <result column="id" property="id"/>
+        <result column="test_task_id" property="testTaskId"/>
+        <result column="questionnaire_id" property="questionnaireId"/>
+    </resultMap>
+
+
+    <select id="selectTestTaskQuestionnairePage" resultMap="testTaskQuestionnaireResultMap">
+        select * from test_task_questionnaire where is_deleted = 0
+    </select>
+
+    <select id="getListById" resultType="org.mentpeak.test.vo.TaskQuestionnaireVO">
+        SELECT
+            t.test_task_id AS taskId,
+            t.questionnaire_id AS questionnaireId,
+            q.NAME
+        FROM
+            test_task_questionnaire AS t
+            LEFT JOIN test_questionnaire AS q ON t.questionnaire_id = q.id
+        WHERE
+            t.test_task_id = #{taskId}
+    </select>
+
+</mapper>

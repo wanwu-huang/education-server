@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.test.mapper.TestQuestionnaireMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="testQuestionnaireResultMap" type="org.mentpeak.test.entity.TestQuestionnaire">
+        <result column="id" property="id"/>
+        <result column="status" property="status"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="name" property="name"/>
+        <result column="abbr" property="abbr"/>
+        <result column="cover" property="cover"/>
+        <result column="scope" property="scope"/>
+        <result column="type" property="type"/>
+        <result column="introduction" property="introduction"/>
+        <result column="reminder" property="reminder"/>
+        <result column="sort" property="sort"/>
+        <result column="route" property="route"/>
+        <result column="is_sort" property="isSort"/>
+    </resultMap>
+
+
+    <select id="selectTestQuestionnairePage" resultMap="testQuestionnaireResultMap">
+        select * from test_questionnaire where is_deleted = 0
+    </select>
+
+</mapper>

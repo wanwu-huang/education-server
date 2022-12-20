@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.test.mapper.TestTaskMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="testTaskResultMap" type="org.mentpeak.test.entity.TestTask">
+        <result column="id" property="id"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="task_name" property="taskName"/>
+        <result column="begin_time" property="beginTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="report_is_visible" property="reportIsVisible"/>
+        <result column="test_approach_id" property="testApproachId"/>
+    </resultMap>
+
+
+    <select id="selectTestTaskPage" resultMap="testTaskResultMap">
+        select * from test_task where is_deleted = 0
+    </select>
+
+    <select id="getTestTaskList" resultType="org.mentpeak.test.vo.TaskInfoVO">
+
+        SELECT
+        tk.*
+        FROM
+        (
+        SELECT
+        t.*,
+        count( tu.completion_status ) AS completion_people_count,
+        IF
+        ( t.end_time >= CURDATE(), 0, 1 ) AS task_status
+        FROM
+        (SELECT * FROM `test_task` where is_deleted = 0 and tenant_code = #{tenantCode}
+        <if test="taskIdList != null and taskIdList.size >0">
+            and id in
+            <foreach collection="taskIdList" item="ids" index="index" open="(" close=")" separator=",">
+                #{ids}
+            </foreach>
+        </if>
+        ) t
+        LEFT JOIN test_task_user tu ON t.id = tu.test_task_id
+        AND tu.completion_status = 1
+        GROUP BY
+        t.id
+        ) tk where 1 = 1
+        <if test="taskName != null and taskName !=''">
+            AND tk.task_name like concat ('%',#{taskName,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="taskCreateTime != null and taskCreateTime !=''">
+            AND date_format(tk.create_time,'%Y-%m-%d') = #{taskCreateTime,jdbcType=VARCHAR}
+        </if>
+        <if test="beginTime != null and beginTime !=''">
+            AND tk.begin_time = #{beginTime,jdbcType=VARCHAR}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            AND tk.end_time = #{endTime,jdbcType=VARCHAR}
+        </if>
+        <if test="taskStatus != null">
+            AND tk.task_status = #{taskStatus,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <select id="getWarnList" resultType="org.mentpeak.test.vo.TaskWarnVO">
+
+        SELECT
+        tk.*
+        FROM
+        (
+        SELECT
+        t.*,
+        count( tu.completion_status ) AS completion_people_count,
+        IF
+        ( t.end_time >= CURDATE(), 0, 1 ) AS task_status
+        FROM
+        (select * from `test_task` t where is_deleted = 0
+        and tenant_code = #{tenantCode}
+        <if test="taskIdList != null and taskIdList.size >0">
+            and id in
+            <foreach collection="taskIdList" item="ids" index="index" open="(" close=")" separator=",">
+                #{ids}
+            </foreach>
+        </if>
+        ) t
+        LEFT JOIN test_task_user tu ON t.id = tu.test_task_id
+        AND tu.completion_status = 1
+        GROUP BY
+        t.id
+        ) tk where 1 = 1
+        <if test="taskName != null and taskName !=''">
+            AND tk.task_name like concat ('%',#{taskName,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="taskCreateTime != null and taskCreateTime !=''">
+            AND date_format(tk.create_time,'%Y-%m-%d') = #{taskCreateTime,jdbcType=VARCHAR}
+        </if>
+        <if test="beginTime != null and beginTime !=''">
+            AND tk.begin_time = #{beginTime,jdbcType=VARCHAR}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            AND tk.end_time = #{endTime,jdbcType=VARCHAR}
+        </if>
+        <if test="taskStatus != null">
+            AND tk.task_status = #{taskStatus,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <select id="totalTestCount" resultType="java.lang.Integer">
+        SELECT
+            count(*) AS tatal_count
+        FROM
+            test_task_department td
+                INNER JOIN t_his_user_ext ue ON td.test_department_id = ue.grade
+                AND td.test_task_id =  #{taskId,jdbcType=LONGVARCHAR} and ue.create_user not in (
+                    SELECT
+                        ue.create_user
+                    FROM
+                        test_task_department td
+                            INNER JOIN t_his_user_ext ue ON td.test_department_id = ue.grade
+                            AND td.test_task_id = #{taskId,jdbcType=LONGVARCHAR} and ue.is_deleted = 1
+                            and ue.create_user not in (select user_id from test_task_user where test_task_id = #{taskId,jdbcType=LONGVARCHAR} and completion_status = 1)
+                    )
+    </select>
+
+    <select id="taskDetailListById" resultType="org.mentpeak.test.vo.TaskDetailVO">
+        SELECT
+        *
+        FROM
+        (
+        SELECT
+        t.*,
+        pd.dict_value AS grade_name,
+        d.dict_value AS class_name,
+        u.id as user_id,
+        u.account,
+        u.real_name,
+        u.sex,
+        IFNULL(tu.completion_status,0) as completion_status,
+        pr.start_time
+        FROM
+        (
+        SELECT
+        td.test_task_id,
+        td.test_department_id,
+        ue.create_user,
+        ue.class_id
+        FROM
+        test_task_department td
+        INNER JOIN t_his_user_ext ue ON td.test_department_id = ue.grade
+        AND td.test_task_id = #{taskId,jdbcType=LONGVARCHAR}
+        ) t
+        LEFT JOIN platform_dict pd ON pd.id = t.test_department_id
+        LEFT JOIN platform_dict d ON d.id = t.class_id
+        LEFT JOIN platform_user u ON u.id = t.create_user
+        LEFT JOIN test_task_user tu ON u.id = tu.user_id AND tu.test_task_id = #{taskId,jdbcType=LONGVARCHAR}
+        LEFT JOIN test_paper_record pr ON t.test_task_id = pr.task_id
+        AND pr.user_id = t.create_user
+        ) tk
+        WHERE
+        tk.user_id not in (
+        SELECT
+        ue.create_user
+        FROM
+        test_task_department td
+        INNER JOIN t_his_user_ext ue ON td.test_department_id = ue.grade
+        AND td.test_task_id = #{taskId,jdbcType=LONGVARCHAR} and ue.is_deleted = 1
+        and ue.create_user not in (select user_id from test_task_user where test_task_id =
+        #{taskId,jdbcType=LONGVARCHAR} and completion_status = 1)
+        )
+        <if test="name != null and name !=''">
+            AND tk.real_name like concat ('%',#{name,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="account != null and account !=''">
+            AND tk.account = #{account,jdbcType=VARCHAR}
+        </if>
+        <if test="sex != null">
+            AND tk.sex = #{sex,jdbcType=INTEGER}
+        </if>
+        <if test="(beginTime != null and beginTime !='') and (endTime != null and endTime !='')">
+            AND tk.start_time &gt;= #{beginTime,jdbcType=VARCHAR} and tk.start_time &lt;
+            date_add(#{endTime,jdbcType=VARCHAR}, interval 1 day)
+        </if>
+        <if test="gradeId != null">
+            AND tk.test_department_id = #{gradeId,jdbcType=LONGVARCHAR}
+        </if>
+        <if test="classId != null">
+            AND tk.class_id = #{classId,jdbcType=LONGVARCHAR}
+        </if>
+        <if test="completionStatus != null">
+            AND tk.completion_status = #{completionStatus,jdbcType=INTEGER}
+        </if>
+    </select>
+    <select id="taskDetailListByIdAndCompletionStatus" resultType="org.mentpeak.test.vo.TaskDetailVO">
+        SELECT
+        *
+        FROM
+        (
+        SELECT
+        t.*,
+        pd.dict_value AS grade_name,
+        d.dict_value AS class_name,
+        u.account,
+        u.real_name,
+        u.sex,
+        IFNULL(tu.completion_status,0) as completion_status,
+        pr.start_time
+        FROM
+        (
+        SELECT
+        td.test_task_id,
+        td.test_department_id,
+        ue.create_user,
+        ue.class_id
+        FROM
+        test_task_department td
+        INNER JOIN t_his_user_ext ue ON td.test_department_id = ue.grade
+        AND td.test_task_id = #{taskId,jdbcType=LONGVARCHAR}
+        ) t
+        LEFT JOIN platform_dict pd ON pd.id = t.test_department_id
+        LEFT JOIN platform_dict d ON d.id = t.class_id
+        LEFT JOIN platform_user u ON u.id = t.create_user
+        LEFT JOIN test_task_user tu ON u.id = tu.user_id
+        LEFT JOIN test_paper_record pr ON t.test_task_id = pr.task_id
+        AND pr.user_id = t.create_user
+        ) tk
+        WHERE
+        tk.create_user not in (
+        SELECT
+        ue.create_user
+        FROM
+        test_task_department td
+        INNER JOIN t_his_user_ext ue ON td.test_department_id = ue.grade
+        AND td.test_task_id = #{taskId,jdbcType=LONGVARCHAR} and ue.is_deleted = 1
+        and ue.create_user not in (select user_id from test_task_user where test_task_id =
+        #{taskId,jdbcType=LONGVARCHAR} and completion_status = 1)
+        )
+        <if test="completionStatus != null">
+            AND tk.completion_status = #{completionStatus,jdbcType=INTEGER}
+        </if>
+
+    </select>
+
+    <select id="taskUserInfoList" resultType="org.mentpeak.test.vo.TaskUserInfoVO">
+        SELECT
+            t.user_id,
+            t.test_task_id as task_id,
+            ue.grade,
+            ue.class_id,
+            u.account,
+            u.real_name,
+            u.sex,
+            pd.dict_value AS grade_name,
+            d.dict_value AS class_name,
+            p.id as paper_id,
+            p.start_time,
+            p.finish_time
+        FROM
+            ( SELECT user_id,test_task_id FROM test_task_user WHERE test_task_id = #{taskId} AND completion_status = 1 ) t
+                LEFT JOIN t_his_user_ext ue ON t.user_id = ue.create_user
+                LEFT JOIN platform_user u ON u.id = ue.create_user
+                LEFT JOIN platform_dict pd ON pd.id = ue.grade
+                LEFT JOIN platform_dict d ON d.id = ue.class_id
+                LEFT JOIN test_paper p ON p.task_id =  #{taskId} and p.user_id = t.user_id and p.is_finish = 1
+
+    </select>
+    <select id="taskUserInfo" resultType="org.mentpeak.test.vo.TaskUserInfoVO">
+
+        SELECT
+            t.user_id,
+            t.test_task_id as task_id,
+            ue.grade,
+            ue.class_id,
+            u.account,
+            u.real_name,
+            u.sex,
+            pd.dict_value AS grade_name,
+            d.dict_value AS class_name,
+            p.id as paper_id,
+            p.start_time,
+            p.finish_time
+        FROM
+            ( SELECT user_id,test_task_id FROM test_task_user WHERE test_task_id = #{taskId} AND user_id = #{userId} ) t
+                LEFT JOIN t_his_user_ext ue ON t.user_id = ue.create_user
+                LEFT JOIN platform_user u ON u.id = ue.create_user
+                LEFT JOIN platform_dict pd ON pd.id = ue.grade
+                LEFT JOIN platform_dict d ON d.id = ue.class_id
+                LEFT JOIN test_paper p ON p.task_id =  #{taskId} and p.user_id = t.user_id
+    </select>
+
+    <select id="userInfoById" resultType="org.mentpeak.test.vo.TaskUserInfoVO">
+
+        SELECT
+            u.id AS user_id,
+            u.account,
+            u.real_name,
+            u.sex,
+            ue.grade,
+            ue.class_id,
+            pd.dict_value AS grade_name,
+            d.dict_value AS class_name
+        FROM
+                ( SELECT * FROM platform_user WHERE id = #{userId}  ) u
+                    LEFT JOIN t_his_user_ext ue ON u.id = ue.create_user
+                    LEFT JOIN platform_dict pd ON pd.id = ue.grade
+                    LEFT JOIN platform_dict d ON d.id = ue.class_id
+    </select>
+    <select id="getTaskById" resultType="org.mentpeak.test.entity.TestTask">
+        SELECT id, task_name, begin_time, end_time, report_is_visible, test_approach_id, tenant_code, create_user, create_time, update_user, update_time, status, is_deleted FROM test_task WHERE id = #{id} AND is_deleted = 0
+    </select>
+
+
+</mapper>

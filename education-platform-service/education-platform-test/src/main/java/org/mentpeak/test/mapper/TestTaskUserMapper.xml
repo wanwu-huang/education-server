@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.test.mapper.TestTaskUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="testTaskUserResultMap" type="org.mentpeak.test.entity.TestTaskUser">
+        <result column="id" property="id"/>
+        <result column="tenant_code" property="tenantCode"/>
+        <result column="test_task_id" property="testTaskId"/>
+        <result column="user_id" property="userId"/>
+        <result column="completion_status" property="completionStatus"/>
+        <result column="is_warn" property="isWarn"/>
+        <result column="is_valid" property="isValid"/>
+    </resultMap>
+    <update id="updateTaskUser">
+        UPDATE test_task_user SET parent_comments = #{riskIndex} WHERE id = #{id}
+    </update>
+
+
+    <select id="selectTestTaskUserPage" resultMap="testTaskUserResultMap">
+        select * from test_task_user where is_deleted = 0
+    </select>
+
+    <select id="getFollewList" resultType="org.mentpeak.test.vo.FollowVO">
+        	SELECT
+                u.id AS userId,
+                t.test_task_id AS taskId,
+                u.real_name AS name,
+                u.sex,
+                u.account,
+                d.dict_value AS className,
+                d1.dict_value AS grade,
+                t.parent_comments,
+                t.teacher_comments,
+                t.student_comments
+            FROM
+                platform_user u
+                LEFT JOIN test_task_user t ON u.id = t.user_id
+                LEFT JOIN t_his_user_ext ue ON ue.create_user = u.id
+                LEFT JOIN platform_dict d ON ue.class_id = d.id
+                LEFT JOIN platform_dict d1 ON ue.grade = d1.id
+            WHERE
+                t.completion_status = 1 and
+                t.is_warn != 0
+                AND t.test_task_id = #{taskId}
+            AND t.follow_level = #{followId}
+    </select>
+
+    <select id="getInvalidPeople" resultType="org.mentpeak.test.vo.UserInfoVO">
+        SELECT
+            t.test_task_id AS taskId,
+            t.user_id AS userId,
+            u.real_name AS userName
+        FROM
+            test_task_user t
+            LEFT JOIN platform_user u ON t.user_id = u.id AND u.tenant_code =#{tenantCode}
+        WHERE
+            t.completion_status = 1 and
+            t.is_valid = 0
+            AND t.test_task_id = #{taskId}
+            AND t.user_id IN (
+            SELECT
+                    create_user
+                FROM
+                    t_his_user_ext
+                WHERE
+                    grade = #{gradeId}
+                AND class_id = #{classId} AND tenant_code =#{tenantCode}) AND t.tenant_code = #{tenantCode}
+    </select>
+
+    <select id="getFollowWarn" resultType="org.mentpeak.test.entity.FollowWarn">
+        SELECT
+            t.test_task_id AS taskId,
+            t.user_id AS userId,
+            u.real_name AS userName,
+            t.follow_level AS followLevel,
+            t.is_warn AS isWarn,
+            parent_comments AS parentComments,
+            teacher_comments AS teacherComments,
+            student_comments AS studentComments
+        FROM
+            test_task_user t
+            LEFT JOIN platform_user u ON t.user_id = u.id
+        WHERE
+            t.completion_status = 1 and
+            t.is_valid = 1
+            AND t.test_task_id = #{taskId}
+            AND t.user_id IN (
+           SELECT
+                    create_user
+                FROM
+                    t_his_user_ext
+                WHERE
+                    grade = #{gradeId}
+                AND class_id = #{classId})
+    </select>
+
+    <select id="getEffPeople" resultType="java.lang.Long">
+        SELECT
+            user_id
+        FROM
+            test_task_user
+        WHERE
+            is_valid = 1
+            AND test_task_id = #{taskId}
+            AND user_id IN (
+            SELECT
+                    create_user
+                FROM
+                    t_his_user_ext
+                WHERE
+                    grade = #{gradeId}
+                AND class_id = #{classId})
+    </select>
+
+    <select id="getAllPeople" resultType="java.lang.Long">
+        SELECT
+            user_id
+        FROM
+            test_task_user
+        WHERE
+            completion_status = 1
+          AND test_task_id = #{taskId}
+          AND user_id IN (
+            SELECT
+                create_user
+            FROM
+                t_his_user_ext
+            WHERE
+                grade = #{gradeId}
+              AND class_id = #{classId})
+    </select>
+    <select id="reportList" resultType="org.mentpeak.test.vo.ReportUserVO">
+        SELECT
+        *
+        FROM
+        (
+        SELECT
+        p.id AS paper_id,
+        p.start_time,
+        p.task_id,
+        p.user_id,
+        u.account,
+        u.real_name,
+        u.sex,
+        ue.grade,
+        ue.class_id,
+        g.dict_value AS grade_name,
+        c.dict_value AS class_name,
+        pr.report_id
+        FROM
+        test_paper p
+        INNER JOIN platform_user u ON p.user_id = u.id
+        <if test="userIdList != null and userIdList.size >0">
+            and u.id in
+            <foreach collection="userIdList" item="ids" index="index" open="(" close=")" separator=",">
+                #{ids}
+            </foreach>
+        </if>
+        AND p.task_id = #{taskId}
+        AND p.is_finish = 1
+        LEFT join test_paper_record pr on p.id = pr.paper_id
+        LEFT JOIN t_his_user_ext ue ON p.user_id = ue.create_user
+        LEFT JOIN platform_dict g ON g.id = ue.grade
+        LEFT JOIN platform_dict c ON c.id = ue.class_id order by p.start_time desc) t
+        WHERE
+        1 = 1
+
+        <if test="realName != null and realName !=''">
+            AND t.real_name like concat ('%',#{realName,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="classId != null and classId !=''">
+            AND t.class_id = #{classId,jdbcType=LONGVARCHAR}
+        </if>
+        <if test="gradeId != null and gradeId !=''">
+            AND t.grade = #{gradeId,jdbcType=LONGVARCHAR}
+        </if>
+    </select>
+    <select id="getTaskUser" resultType="org.mentpeak.test.entity.TestTaskUser">
+        SELECT id, tenant_code, test_task_id, user_id, completion_status, is_warn, is_valid, follow_level, parent_comments, teacher_comments, student_comments, create_user, create_time, update_user, update_time, status, is_deleted FROM test_task_user WHERE is_deleted = 0 AND (user_id = #{userId} AND test_task_id = #{taskId} AND completion_status = 1)
+    </select>
+    <select id="getUserExtById" resultType="org.mentpeak.user.entity.UserExt">
+        select * from t_his_user_ext where create_user = #{userId}
+    </select>
+
+</mapper>

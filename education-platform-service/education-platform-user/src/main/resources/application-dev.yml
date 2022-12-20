@@ -1,0 +1,16 @@
+#服务器端口
+server:
+  port: 36104
+
+#数据源配置
+spring:
+  datasource:
+    url: ${platform.datasource.dev.url}
+    username: ${platform.datasource.dev.username}
+    password: ${platform.datasource.dev.password}
+  zipkin:
+    base-url: http://192.168.1.50:30002
+    discovery-client-enabled: false # 不要让nacos把zipkin注册进去（可以不写）
+  sleuth:
+    sampler:
+      probability: 1.0

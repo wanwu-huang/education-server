@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mentpeak.test.mapper.TestTeacherPaperMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="testTeacherPaperResultMap" type="org.mentpeak.test.entity.TestTeacherPaper">
+        <result column="id" property="id"/>
+        <result column="status" property="status"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="questionnaire_id" property="questionnaireId"/>
+        <result column="user_id" property="userId"/>
+        <result column="start_time" property="startTime"/>
+        <result column="finish_time" property="finishTime"/>
+        <result column="question_id" property="questionId"/>
+        <result column="is_finish_question" property="isFinishQuestion"/>
+        <result column="is_finish" property="isFinish"/>
+        <result column="evaluation_records_id" property="evaluationRecordsId"/>
+        <result column="remarks" property="remarks"/>
+    </resultMap>
+
+
+    <select id="selectTestTeacherPaperPage" resultMap="testTeacherPaperResultMap">
+        select * from test_teacher_paper where is_deleted = 0
+    </select>
+    <select id="stuListByTeacherId" resultType="org.mentpeak.test.vo.TeacherStudentVO">
+
+        SELECT
+            t.user_id,
+            u.real_name
+        FROM
+            (
+                SELECT
+                    tc.*,
+                    ue.create_user as user_id
+                FROM
+                    teacher_class tc
+                        INNER JOIN t_his_user_ext ue ON tc.class_id = ue.class_id and tc.grade_id = ue.grade
+                        AND tc.teacher_id = #{teacherId}
+            ) t
+                LEFT JOIN platform_user u ON u.id = t.user_id
+    </select>
+    <select id="teacherRatingList" resultType="org.mentpeak.test.vo.TeacherPaperVO">
+
+        SELECT
+            *
+        FROM
+            (
+
+                SELECT
+                    t.*,
+                    c.start_time,
+                    IFNULL( c.is_finish, 3 ) AS is_finish
+                FROM
+                (
+                    SELECT
+                        p.grade_id,
+                        p.class_id,
+                        p.teacher_id AS user_id,
+                        g.dict_value AS grade_name,
+                        c.dict_value AS class_name
+                        FROM
+                        ( SELECT * FROM teacher_class WHERE teacher_id = #{userId} ) p
+                        LEFT JOIN platform_dict g ON p.grade_id = g.id
+                        LEFT JOIN platform_dict c ON p.class_id = c.id
+                    ) t
+                    LEFT JOIN (
+                        SELECT
+                        any_value ( id ) AS id,
+                        any_value ( grade_id ) AS grade_id,
+                        any_value ( class_id ) AS class_id,
+                        any_value ( user_id ) AS user_id,
+                        any_value ( start_time ) AS start_time,
+                        any_value ( is_finish ) AS is_finish
+                        FROM
+                        ( SELECT DISTINCT * FROM test_teacher_paper WHERE user_id = #{userId} and is_finish != 0 ORDER BY start_time DESC ) p
+                    GROUP BY
+                    grade_id,
+                    class_id,
+                    user_id
+                ) c ON t.grade_id = c.grade_id
+                AND t.class_id = c.class_id
+                AND t.user_id = c.user_id
+        ) t
+        WHERE
+            1 = 1
+        <if test="status != null and status !=''">
+            AND t.is_finish = #{status}
+        </if>
+        <if test="classId != null and classId !=''">
+            AND t.class_id = #{classId}
+        </if>
+        <if test="gradeId != null and gradeId !=''">
+            AND t.grade_Id = #{gradeId}
+        </if>
+    </select>
+    <select id="stuListByGradeClassId" resultType="org.mentpeak.test.vo.TeacherStudentVO">
+        SELECT
+            u.id AS user_id,
+            u.real_name
+        FROM
+            platform_user u
+                INNER JOIN t_his_user_ext ue ON ue.create_user = u.id
+                AND ue.grade = #{gradeId}
+                AND ue.class_id = #{classId} and ue.is_deleted = 0
+    </select>
+
+
+</mapper>
